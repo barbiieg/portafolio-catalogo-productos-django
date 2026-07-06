@@ -42,3 +42,15 @@ Eliminar registros con confirmación previa
 - Clasificar productos por categorías
 - Interfaz adaptada para computadoras, tabletas y celulares
 - Mensajes claros para informar al usuario de cada operación
+
+---
+## 📸 Capturas de pantalla
+
+### 🏠 Página Principal
+![Página Principal](capturas/home.png)
+
+### 🛒 Carrito de Compras
+![Carrito](capturas/carrito.png)
+
+### ⚙️ Panel de Administración
+![Panel de Administración](capturas/panel_admin.png)
