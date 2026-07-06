@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block contenido %}
+<h2 class="mb-4" style="color: #7A577A;">🛒 Tu Carrito</h2>
+{% if items %}
+<table class="table table-striped rounded overflow-hidden">
+  <thead style="background-color: var(--rosa-pastel);">
+    <tr>
+      <th>Producto</th>
+      <th>Precio</th>
+      <th>Cantidad</th>
+      <th>Subtotal</th>
+      <th>Acción</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for i in items %}
+    <tr>
+      <td>{{ i.producto.nombre }}</td>
+      <td>${{ i.producto.precio }}</td>
+      <td>
+        <form method="post" action="{% url 'actualizar_cantidad' i.producto.id %}" class="d-flex gap-2">
+          {% csrf_token %}
+          <input type="number" name="cantidad" value="{{ i.cantidad }}" min="1" class="form-control w-50">
+          <button class="btn btn-sm btn-primary">Actualizar</button>
+        </form>
+      </td>
+      <td class="fw-bold" style="color: #4E8E5E;">${{ i.subtotal }}</td>
+      <td><a href="{% url 'quitar_carrito' i.producto.id %}" class="btn btn-sm btn-danger">Quitar</a></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+<h3 class="text-end mt-4">Total: <span style="color: #4E8E5E; font-weight: bold;">${{ total }}</span></h3>
+<div class="text-end mt-3">
+  <a href="/" class="btn btn-secondary">Seguir comprando</a>
+  <a href="{% url 'confirmar_compra' %}" class="btn btn-success ms-2">✅ Confirmar compra</a>
+</div>
+{% else %}
+  <div class="alert alert-info text-center py-5">
+    Tu carrito está vacío. <a href="/" class="text-decoration-none">Ir al catálogo</a>
+  </div>
+{% endif %}
+{% endblock %}

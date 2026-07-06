@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block contenido %}
+<h2 class="mb-4 text-center" style="color: #7A577A;">📦 Productos Disponibles</h2>
+<div class="row g-4">
+{% for p in productos %}
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title" style="color: #7A577A;">{{ p.nombre }}</h5>
+        <p class="card-text text-muted">{{ p.descripcion }}</p>
+        <p class="fs-5 fw-bold" style="color: #4E8E5E;">Precio: ${{ p.precio }}</p>
+        <p class="text-secondary">Stock: {{ p.stock }} unidades</p>
+        <div class="d-flex gap-2 mt-3">
+          <a href="{% url 'detalle_producto' p.id %}" class="btn btn-outline-primary w-50">Ver detalle</a>
+          <a href="{% url 'agregar_carrito' p.id %}" class="btn btn-success w-50">Agregar al carrito</a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% empty %}
+  <div class="col-12">
+    <div class="alert alert-info text-center py-4">
+      No hay productos todavía. Ingresa como administrador para agregar.
+    </div>
+  </div>
+{% endfor %}
+</div>
+{% endblock %}

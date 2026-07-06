@@ -1,47 +1,68 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from .models import Producto
-from .forms import ProductoForm
+from django.contrib.auth.decorators import login_required
+from .models import Producto, Pedido, ItemPedido
 
-# Listar todos los productos
-def listar_productos(request):
-    productos = Producto.objects.all().select_related('categoria')
-    return render(request, 'listar_productos.html', {'productos': productos})
+def catalogo(request):
+    productos = Producto.objects.all()
+    return render(request, 'catalogo.html', {'productos': productos})
 
-# Crear producto
-def crear_producto(request):
-    if request.method == 'POST':
-        form = ProductoForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "✅ Producto guardado correctamente")
-            return redirect('listar_productos')  # ← AQUÍ te debe llevar a la lista
-        else:
-            messages.error(request, "❌ Revisa los datos: precio > 0, categoría seleccionada")
-    else:
-        form = ProductoForm()
-    return render(request, 'formulario_producto.html', {'form': form, 'accion': 'Crear'})
-
-# Editar producto
-def editar_producto(request, id):
+def detalle_producto(request, id):
     producto = get_object_or_404(Producto, id=id)
-    if request.method == 'POST':
-        form = ProductoForm(request.POST, instance=producto)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "✅ Producto actualizado")
-            return redirect('listar_productos')
-        else:
-            messages.error(request, "❌ Revisa los datos")
-    else:
-        form = ProductoForm(instance=producto)
-    return render(request, 'formulario_producto.html', {'form': form, 'accion': 'Editar'})
+    return render(request, 'detalle.html', {'producto': producto})
 
-# Eliminar producto
-def eliminar_producto(request, id):
-    producto = get_object_or_404(Producto, id=id)
+def ver_carrito(request):
+    carrito = request.session.get('carrito', {})
+    items = []
+    total = 0
+    for prod_id, cantidad in carrito.items():
+        p = get_object_or_404(Producto, id=prod_id)
+        subtotal = p.precio * cantidad
+        items.append({'producto': p, 'cantidad': cantidad, 'subtotal': subtotal})
+        total += subtotal
+    return render(request, 'carrito.html', {'items': items, 'total': total})
+
+def agregar_carrito(request, id):
+    carrito = request.session.get('carrito', {})
+    carrito[str(id)] = carrito.get(str(id), 0) + 1
+    request.session['carrito'] = carrito
+    messages.success(request, '✅ Producto agregado al carrito')
+    return redirect('catalogo')
+
+def quitar_carrito(request, id):
+    carrito = request.session.get('carrito', {})
+    if str(id) in carrito:
+        del carrito[str(id)]
+        request.session['carrito'] = carrito
+    messages.info(request, '🗑️ Producto eliminado del carrito')
+    return redirect('ver_carrito')
+
+def actualizar_cantidad(request, id):
     if request.method == 'POST':
-        producto.delete()
-        messages.success(request, "✅ Producto eliminado")
-        return redirect('listar_productos')
-    return render(request, 'confirmar_eliminacion.html', {'producto': producto})
+        cantidad = int(request.POST.get('cantidad', 1))
+        if cantidad > 0:
+            carrito = request.session.get('carrito', {})
+            carrito[str(id)] = cantidad
+            request.session['carrito'] = carrito
+            messages.success(request, '🔄 Cantidad actualizada')
+    return redirect('ver_carrito')
+
+@login_required
+def confirmar_compra(request):
+    carrito = request.session.get('carrito', {})
+    if not carrito:
+        messages.warning(request, '⚠️ El carrito está vacío')
+        return redirect('catalogo')
+    pedido = Pedido(usuario=request.user)
+    pedido.save()
+    total_final = 0
+    for prod_id, cantidad in carrito.items():
+        p = get_object_or_404(Producto, id=prod_id)
+        subtotal = p.precio * cantidad
+        ItemPedido(pedido=pedido, producto=p, cantidad=cantidad, subtotal=subtotal).save()
+        total_final += subtotal
+    pedido.total = total_final
+    pedido.save()
+    del request.session['carrito']
+    messages.success(request, '🎉 Compra realizada con éxito')
+    return redirect('catalogo')
