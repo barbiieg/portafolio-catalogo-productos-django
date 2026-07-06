@@ -53,4 +53,4 @@ Eliminar registros con confirmación previa
 ![Carrito](capturas/carrito.png)
 
 ### ⚙️ Panel de Administración
-![Panel de Administración](capturas/panel_admin.png)
+![Panel de Administración](capturas/admin.png)
