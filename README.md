@@ -35,10 +35,10 @@ Aplicación web desarrollada como portafolio personal, construida desde cero apl
 - `manage.py`: Archivo principal para ejecutar comandos de Django
 
 ## 6. Funcionalidades principales
-Listar todos los productos registrados
-Agregar nuevos productos con validación de campos
-Editar la información de productos existentes
+- Listar todos los productos registrados
+- Agregar nuevos productos con validación de campos
+- Editar la información de productos existentes
 Eliminar registros con confirmación previa
-Clasificar productos por categorías
-Interfaz adaptada para computadoras, tabletas y celulares
-Mensajes claros para informar al usuario de cada operación
+- Clasificar productos por categorías
+- Interfaz adaptada para computadoras, tabletas y celulares
+- Mensajes claros para informar al usuario de cada operación
