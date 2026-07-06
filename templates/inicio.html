@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Formulario de Contacto{% endblock %}
+
+{% block contenido %}
+    <h2>Contáctanos</h2>
+    <br>
+    <form method="POST">
+        {% csrf_token %}
+
+        <div>
+            <label>{{ formulario.nombre.label }}</label><br>
+            {{ formulario.nombre }}
+            {% if formulario.nombre.errors %}
+                <div class="error">{{ formulario.nombre.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div>
+            <label>{{ formulario.correo.label }}</label><br>
+            {{ formulario.correo }}
+            {% if formulario.correo.errors %}
+                <div class="error">{{ formulario.correo.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div>
+            <label>{{ formulario.mensaje.label }}</label><br>
+            {{ formulario.mensaje }}
+            {% if formulario.mensaje.errors %}
+                <div class="error">{{ formulario.mensaje.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <br>
+        <button type="submit">Enviar mensaje</button>
+    </form>
+{% endblock %}

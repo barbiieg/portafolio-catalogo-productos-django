@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+<h2 class="mb-3">Lista de Productos</h2>
+
+<div class="row g-3">
+    {% for producto in productos %}
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ producto.nombre }}</h5>
+                <p class="card-text">{{ producto.descripcion }}</p>
+                <p class="fw-bold text-success fs-5">Precio: ${{ producto.precio }}</p>
+                <p class="text-muted">Stock: {{ producto.stock }} | Categoría: {{ producto.categoria }}</p>
+                <a href="{% url 'editar_producto' producto.id %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                <a href="{% url 'eliminar_producto' producto.id %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">No hay productos registrados todavía.</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
